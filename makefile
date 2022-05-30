@@ -64,19 +64,13 @@ build:
 	@mkdir -p $(BIN_DIR)
 	$(CC) $(REL_FLAGS) $(SRC_PATH) -o $(REL_PATH)
 
-args_provided:
-ifndef arg
-	$(info run expression arg= not provided)
-	$(error failed)
-endif
-
 # run source
-flagrun: args_provided
+flagrun:
 	@mkdir -p $(BIN_DIR)
 	@$(CC) $(REL_FLAGS) $(flags) $(SRC_PATH) -o $(REL_PATH)
 	@$(REL_PATH) $(arg)
 
-run: args_provided
+run:
 	@$(REL_PATH) $(arg)
 
 test_build:
