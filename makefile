@@ -8,7 +8,7 @@ d: debug
 db: debug_build
 b: build
 r: run
-rt: runtest
+fr: flagrun
 c: clean
 cf: cleanf
 t: test
@@ -22,7 +22,7 @@ options:
 	$(info $(TAB)make db | debug_build)
 	$(info $(TAB)make  b | build)
 	$(info $(TAB)make  r | run arg="[arguments]")
-	$(info $(TAB)make rt | runtest arg="[arguments]")
+	$(info $(TAB)make fr | flagrun arg="[arguments]" flags="[gcc flags]")
 	$(info $(TAB)make  c | clean)
 	$(info $(TAB)make cf | cleanf)
 	$(info $(TAB)make  t | test)
@@ -34,7 +34,7 @@ CC        = gcc
 DBG       = gdb -q
 DBG_FLAGS = -Wall -D DEBUG="(1)" -g3 -ggdb
 REL_FLAGS = -Wall -Ofast
-TST_FLAGS = -Wall -D TEST="(1)" -D ECHO="(1)" -g3 -ggdb
+TST_FLAGS = -Wall -D TEST="(1)"
 
 SRC_DIR   = ./src
 BIN_DIR   = ./bin
@@ -71,9 +71,9 @@ ifndef arg
 endif
 
 # run source
-runtest: args_provided
+flagrun: args_provided
 	@mkdir -p $(BIN_DIR)
-	@$(CC) $(TST_FLAGS) $(SRC_PATH) -o $(REL_PATH)
+	@$(CC) $(REL_FLAGS) $(flags) $(SRC_PATH) -o $(REL_PATH)
 	@$(REL_PATH) $(arg)
 
 run: args_provided
