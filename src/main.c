@@ -14,7 +14,7 @@ int main (int argsc, char **argsv)
     for (u64 i = 1; i < argsc; i++) {
         datalen += strlen (argsv[i]) + 1;
     }
-    string data = malloc (datalen * sizeof (char));
+    string data = calloc (datalen, sizeof (char));
     data[0] = 0;
     for (u64 i = 1; i < argsc; i++) {
         strcat (data, argsv[i]);
@@ -23,6 +23,11 @@ int main (int argsc, char **argsv)
     # ifdef ECHO
         printf ("%s\n", data);
     # endif
+    u64 total_chunks;
+    string digest = gen_digest (gen_chunkup (data, &total_chunks), total_chunks);
+    u64 *int_digest = (u64*) (digest);
+    printf ("0x%lx\n", *int_digest);
     free (data);
+    free (digest);
     return 0;
 }
