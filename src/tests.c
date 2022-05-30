@@ -1,3 +1,5 @@
+# ifdef TEST
+
 # include "headers/headers.h"
 # include "headers/errcodes.h"
 
@@ -52,3 +54,5 @@ int main (int argsc, string argsv[])
     }
     return 0;
 }
+
+# endif
