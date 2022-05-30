@@ -25,6 +25,7 @@ int main (int argsc, char **argsv)
             strcat (data, argsv[i]);
             strcat (data, " ");
         }
+        data[datalen -1] = 0;
     }
     # ifdef ECHO
         printf ("%s\n", data);
