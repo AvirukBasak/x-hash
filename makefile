@@ -41,8 +41,8 @@ BIN_DIR   = ./bin
 
 LIB_PATH  = $(SRC_DIR)/lib/*.c
 SRC_PATH  = $(LIB_PATH) $(SRC_DIR)/main.c
-DBG_PATH  = $(BIN_DIR)/dbg-executable
-REL_PATH  = $(BIN_DIR)/executable
+DBG_PATH  = $(BIN_DIR)/dbg-xhash
+REL_PATH  = $(BIN_DIR)/xhash
 
 GOTO_HELL = 2> /dev/null
 
