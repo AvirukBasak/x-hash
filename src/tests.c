@@ -1,10 +1,9 @@
 # include "headers/headers.h"
 # include "headers/errcodes.h"
 
-# include "lib/globals.h"
 # include "lib/general.h"
 
-bool test_gen_chunkup()
+bool test_general()
 {
     bool flag = false;
     string str = "Lorem ipsum dolor sit amet consectetur adipiscing elit sed "
@@ -15,18 +14,20 @@ bool test_gen_chunkup()
                  "pariatur. Excepteur sint occaecat cupidatat non proident sunt in culpa "
                  "qui officia deserunt mollit anim id est laborum.";
     u64 total_chunks;
-    chunk *data = gen_chunkup (str, &total_chunks);
+    chunk *chunks = gen_chunkup (str, &total_chunks);
+    string digest = gen_digest (chunks, total_chunks);
+    flag = strlen (digest) == CHUNK_SIZE;
     # ifdef DEBUG
          printf ("{\n");
     # endif
     for (u64 i = 0; i < total_chunks; i++) {
-        if (strlen (data[i]) != CHUNK_SIZE) {
+        if (strlen (chunks[i]) != CHUNK_SIZE) {
             flag = false;
             break;
         }
         flag = true;
         # ifdef DEBUG
-            printf ("    \"%s\",\n", data[i]);
+            printf ("    \"%s\",\n", chunks[i]);
         # endif
     }
     # ifdef DEBUG
@@ -34,13 +35,16 @@ bool test_gen_chunkup()
         printf ("total_chunks = %" PRIu64 "\n", total_chunks);
         printf ("strlen (str) = %" PRIu64 "\n", strlen (str));
     # endif
-    free (data);
+    u64 *int_digest = (u64*) (digest);
+    printf ("digest: 0x%lx\n", *int_digest);
+    free (chunks);
+    free (digest);
     return flag;
 }
 
 int main (int argsc, string argsv[])
 {
-    bool test_success = test_gen_chunkup() && true;
+    bool test_success = test_general();
     if (!test_success) {
         printf ("Test FAILED\n");
     } else {
