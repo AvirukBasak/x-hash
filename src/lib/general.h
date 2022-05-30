@@ -20,4 +20,14 @@
      */
     chunk *gen_chunkup (string data, u64 *total_chunks);
 
+    /**
+     * @brief Digests all the chunks together
+     *
+     * Note that you must free the returned pointer.
+     *
+     * @param chunks The chunks array
+     * @param total_chunks Total number of chunks
+     */
+    string gen_digest (chunk *chunks, u64 total_chunks);
+
 # endif
