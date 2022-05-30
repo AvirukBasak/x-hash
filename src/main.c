@@ -23,14 +23,17 @@ int main (int argsc, char **argsv)
         printf ("%s\n", data);
     # endif
     u64 total_chunks;
-    string digest = gen_digest (gen_chunkup (data, &total_chunks), total_chunks);
+    chunk *chunks_arr = gen_chunkup (data, &total_chunks);
+    string digest = gen_digest (chunks_arr, total_chunks);
     # ifdef DEBUG
         printf ("%s\n", digest);
+        printf ("total_chunks: %" PRIu64 "\n", total_chunks);
     # else
         u64 int_digest = *((u64*)digest);
         printf ("0x%lx\n", int_digest);
     # endif
     free (data);
+    free (chunks_arr);
     free (digest);
     return 0;
 }

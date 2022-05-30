@@ -15,7 +15,7 @@ bool test_general()
                  "reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla "
                  "pariatur. Excepteur sint occaecat cupidatat non proident sunt in culpa "
                  "qui officia deserunt mollit anim id est laborum.";
-    u64 total_chunks;
+    u64 total_chunks = 0;
     chunk *chunks = gen_chunkup (str, &total_chunks);
     string digest = gen_digest (chunks, total_chunks);
     flag = strlen (digest) == CHUNK_SIZE;
