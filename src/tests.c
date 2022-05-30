@@ -16,18 +16,24 @@ bool test_gen_chunkup()
                  "qui officia deserunt mollit anim id est laborum.";
     u64 total_chunks;
     chunk *data = gen_chunkup (str, &total_chunks);
-    printf ("total_chunks = %" PRIu64 "\n", total_chunks);
-    printf ("strlen (str) = %" PRIu64 "\n", strlen (str));
-    // printf ("{\n");
+    # ifdef DEBUG
+         printf ("{\n");
+    # endif
     for (u64 i = 0; i < total_chunks; i++) {
-        if (!(strlen (data[i]) == 8 || strlen (data[total_chunks -1]) <= 8)) {
+        if (strlen (data[i]) != CHUNK_SIZE) {
             flag = false;
             break;
         }
         flag = true;
-        // printf ("    \"%s\",\n", data[i]);
+        # ifdef DEBUG
+            printf ("    \"%s\",\n", data[i]);
+        # endif
     }
-    // printf ("}\n");
+    # ifdef DEBUG
+        printf ("}\n");
+        printf ("total_chunks = %" PRIu64 "\n", total_chunks);
+        printf ("strlen (str) = %" PRIu64 "\n", strlen (str));
+    # endif
     free (data);
     return flag;
 }
