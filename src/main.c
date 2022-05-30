@@ -5,22 +5,30 @@
 
 int main (int argsc, char **argsv)
 {
-    if (argsc < 2) {
-        fprintf (stderr, "xhash: error: no arguments provided\n");
-        exit (E_CLIARGS);
-    }
+    string data = NULL;
     u64 datalen = 0;
-    for (u64 i = 1; i < argsc; i++) {
-        datalen += strlen (argsv[i]) + 1;
-    }
-    string data = calloc (datalen, sizeof (char));
-    data[0] = 0;
-    for (u64 i = 1; i < argsc; i++) {
-        strcat (data, argsv[i]);
-        strcat (data, " ");
+    if (argsc < 2) {
+        i8 c;
+        while ((c = getchar()) != 0 && c != EOF && c != 13 && c != 10) {
+            data = realloc (data, sizeof (char) * ++datalen);
+            data[datalen - 1] = c;
+        }
+        data = realloc (data, sizeof (char) * datalen + 1);
+        data[datalen] = 0;
+    } else {
+        for (u64 i = 1; i < argsc; i++) {
+            datalen += strlen (argsv[i]) + 1;
+        }
+        data = calloc (datalen, sizeof (char));
+        data[0] = 0;
+        for (u64 i = 1; i < argsc; i++) {
+            strcat (data, argsv[i]);
+            strcat (data, " ");
+        }
     }
     # ifdef ECHO
         printf ("%s\n", data);
+        printf ("datalen: %"PRIu64 "\n", datalen);
     # endif
     u64 total_chunks;
     chunk *chunks_arr = gen_chunkup (data, &total_chunks);
