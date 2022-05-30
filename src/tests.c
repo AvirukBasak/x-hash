@@ -28,6 +28,7 @@ bool test_gen_chunkup()
         // printf ("    \"%s\",\n", data[i]);
     }
     // printf ("}\n");
+    free (data);
     return flag;
 }
 
