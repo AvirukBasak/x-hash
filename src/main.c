@@ -24,8 +24,12 @@ int main (int argsc, char **argsv)
     # endif
     u64 total_chunks;
     string digest = gen_digest (gen_chunkup (data, &total_chunks), total_chunks);
-    u64 *int_digest = (u64*) (digest);
-    printf ("0x%lx\n", *int_digest);
+    # ifdef DEBUG
+        printf ("%s\n", digest);
+    # else
+        u64 int_digest = *((u64*)digest);
+        printf ("0x%lx\n", int_digest);
+    # endif
     free (data);
     free (digest);
     return 0;
