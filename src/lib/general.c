@@ -12,14 +12,16 @@
 chunk *gen_chunkup (string data, u64 *total_chunks)
 {
     u64 len = strlen (data);
-    i8 unfilled_bytes = 8 - len % CHUNK_SIZE;
-    *total_chunks = len / 8 + (unfilled_bytes ? 1 : 0);
+    i8 unfilled_bytes = CHUNK_SIZE - len % CHUNK_SIZE;
+    *total_chunks = len / CHUNK_SIZE + (unfilled_bytes ? 1 : 0);
     chunk *arr_chunks = malloc (*total_chunks * sizeof (char[CHUNK_SIZE + 1]));
     for (u64 i = 0, j = 0; i < *total_chunks; i++) {
         for (u64 k = 0; k < CHUNK_SIZE; j++, k++) {
+            if (j == len)
+                j = len / 2;
             arr_chunks[i][k] = data[j];
         }
-        arr_chunks[i][8] = 0;
+        arr_chunks[i][CHUNK_SIZE] = 0;
     }
     return arr_chunks;
 }
