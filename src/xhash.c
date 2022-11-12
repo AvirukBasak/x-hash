@@ -52,7 +52,11 @@ char *to_hex_string(Bytes bytes)
 Bytes x_hash(Bytes bytes)
 {
     if (!bytes.data) abort();
-    return bytes;
+    const char DEF0[33] = { 0 };
+    const char DEF1[33] = { 0 };
+    const size_t DEF_LEN = 32;
+    Bytes hash = { malloc(DEF_LEN), DEF_LEN -1 };
+    return hash;
 }
 
 void printhelp()
