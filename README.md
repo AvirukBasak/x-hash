@@ -1,4 +1,4 @@
-# C/C++ template
+# X Hash
 Experimental hashing algorithm.
 
 ## Usage
