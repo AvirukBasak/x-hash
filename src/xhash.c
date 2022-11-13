@@ -3,6 +3,9 @@
 #include <string.h>
 #include <stdbool.h>
 
+#define MAX(a, b) ( a > b ? a : b )
+#define MIN(a, b) ( a < b ? a : b )
+
 typedef unsigned char ubyte_t;
 
 typedef struct
@@ -52,36 +55,43 @@ char *to_hex_string(Bytes bytes)
 Bytes x_hash(Bytes bytes)
 {
     if (!bytes.data) abort();
-    const char DEF0[33] = { 0 };
-    const char DEF1[33] = { 0 };
-    const size_t DEF_LEN = 32;
-    Bytes hash = { malloc(DEF_LEN), DEF_LEN -1 };
+    /* DEF0: follows pattern of DEF1 with a digit b/w each term
+     * DEF1: A-Z with alternating case
+     */
+    const char DEF0[33] = "0qQ1rR2sS3tT4uU5vV6wW7xX8y9YzZaA";
+    const char DEF1[33] = "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpP";
+    const size_t DEF_LEN = 33;
+    Bytes hash = { malloc(DEF_LEN -1), DEF_LEN -1 };
+    const size_t repeats = MIN(hash.size, bytes.size);
+    const size_t updates = MAX(hash.size, bytes.size);
+    for (int i = 0, j = 0; i < updates; i++, j += DEF_LEN/2)
+        hash.data[i] = bytes.data[j % bytes.size] % hash.size ?
+            DEF0[j % DEF_LEN] : DEF1[j % DEF_LEN];
+    for (int i = hash.size/2, j = 0; i < updates; i += DEF_LEN/2, j += 8)
+        hash.data[i] += bytes.data[j % bytes.size];
+    for (int i = 0; i < repeats; i++)
+        for (int j = 0; j < updates; j++)
+            hash.data[j % hash.size] += bytes.data[j % bytes.size];
     return hash;
 }
 
 void printhelp()
 {
     printf(
-        "USAGE: xhash [option] [args]\n"
+        "USAGE: xhash [path]\n"
         "  -h --help   Display this message\n"
-        "  -f --file   Hash a file\n"
     );
 }
 
 int main(int argc, char *argv[])
 {
-    if (argc < 2) {
-        fprintf(stderr, "xhash: too few arguments\n");
-        printhelp();
-        exit(1);
-    } else if (argc > 3) {
+    if (argc > 2) {
         fprintf(stderr, "xhash: too many arguments\n");
+        printhelp();
         exit(2);
     }
-    char *arg = argv[1];
-    if (strcmp(arg, "--help") == 0
-        || strcmp(arg, "-h") == 0) printhelp();
-    else if (!strcmp(arg, "-")) {
+    char *arg = argc < 2 ? "-" : argv[1];
+    if (!strcmp(arg, "-")) {
         Bytes bytes = input_bytes(stdin);
         Bytes hash = x_hash(bytes);
         char *hex = to_hex_string(hash);
@@ -89,17 +99,17 @@ int main(int argc, char *argv[])
         free(bytes.data);
         free(hash.data);
         free(hex);
-        return 0;
-    } else if (strcmp(arg, "--file") == 0
-        || strcmp(arg, "-f") == 0) {
-        if (argc < 2) {
-            fprintf(stderr, "xhash: file path not provided\n");
-            exit(3);
-        }
-        FILE *fd = fopen(argv[2], "rb");
+    } else if (!strcmp(arg, "--help") || !strcmp(arg, "-h")) {
+        printhelp();
+    } else if (arg[0] == '-') {
+        fprintf(stderr, "xhash: invalid argument\n");
+        printhelp();
+        exit(4);
+    } else {
+        FILE *fd = fopen(arg, "rb");
         if (!fd) {
-            fprintf(stderr, "xhash: cannot access '%s'\n", argv[2]);
-            exit(4);
+            fprintf(stderr, "xhash: cannot access '%s'\n", arg);
+            exit(5);
         }
         Bytes bytes = input_bytes(fd);
         Bytes hash = x_hash(bytes);
@@ -109,11 +119,6 @@ int main(int argc, char *argv[])
         free(hash.data);
         free(hex);
         fclose(fd);
-        return 0;
-    } else {
-        fprintf(stderr, "xhash: invalid argument\n");
-        printhelp();
-        exit(5);
     }
     return 0;
 }
